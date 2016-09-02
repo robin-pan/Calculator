@@ -7,57 +7,100 @@
 using namespace std;
 
 class Expression;
-typedef stack <Expression*> ExpStack;
+typedef stack <int> ExpStack;
 
 class Expression {
 public:
-	virtual bool evaluate(ExpStack exp_vals) = 0;
+	virtual int evaluate() = 0;
 };
 
-class Const_Op : public Expression {
-private:
+class Const : public Expression {
+protected:
 	int _value;
 
-public:
-	Const_Op(int value) {
+	Const(int value) : Expression() {
 		_value = value;
 	}
 
-	int get_value() {
+public:
+	int evaluate() {
 		return _value;
-	}
-
-	bool evaluate(ExpStack exp_vals) {
-
-		return true;
 	}
 };
 
-class Binary_Op : public Expression {
-private:
+class BinaryOp : public Expression {
+protected:
 	int _operand1;
 	int _operand2;
-public:
-	Binary_Op(int operand1, int operand2) {
+
+	BinaryOp(int operand1, int operand2) : Expression() {
 		_operand1 = operand1;
 		_operand2 = operand2;
 	}
+};
 
-	bool evaluate(ExpStack exp_vals) {
-		return true;
+class AddOp : public BinaryOp {
+public:
+	AddOp(int operand1, int operand2) : BinaryOp(operand1, operand2) {}
+
+	int evaluate() {
+		return _operand1 + _operand2;
 	}
 };
 
-class Unary_Op : public Expression {
-private:
-	int _operand;
+class SubOp : public BinaryOp {
 public:
-	Unary_Op(int operand) {
+	SubOp(int operand1, int operand2) : BinaryOp(operand1, operand2) {}
+
+	int evaluate() {
+		return _operand1 - _operand2;
+	}
+};
+
+class MultOp : public BinaryOp {
+public:
+	MultOp(int operand1, int operand2) : BinaryOp(operand1, operand2) {}
+
+	int evaluate() {
+		return _operand1 * _operand2;
+	}
+};
+
+// TODO Account for 0
+class DivOp : public BinaryOp {
+public:
+	DivOp(int operand1, int operand2) : BinaryOp(operand1, operand2) {}
+
+	int evaluate() {
+		return _operand1 / _operand2;
+	}
+};
+
+class UnaryOp : public Expression {
+protected:
+	int _operand;
+
+	UnaryOp(int operand) {
 		_operand = operand;
 	}
+};
 
-	bool evaluate(ExpStack exp_vals) {
-		return true;
+class AbsOp : public UnaryOp {
+public:
+	AbsOp(int operand) : UnaryOp(operand) {}
+
+	int evaluate() {
+		if (_operand < 0) return 0 - _operand;
+		else return _operand;
+	}
+};
+
+class NegOp : public UnaryOp {
+public:
+	NegOp(int operand) : UnaryOp(operand) {}
+
+	int evaluate() {
+		return 0 - _operand;
 	}
 };
 
@@ -83,33 +126,82 @@ string nth_expression(string input, int n) {
 	return "";
 }
 
-Expression* int_to_expression(int i) {
-	cout << "int_to_expression() called" << endl;
-	Expression * e;
-	return e;
-}
+// Create, evaluate, push
+void operate(string input_section, ExpStack &e) {
+	Expression* exp;
 
-Expression* string_to_expression(string input_section) {
-	if (input_section.compare("NEG")) true;
-	else if (input_section.compare("ABS")) true;
-	else if (input_section.compare("+")) true;
-	else if (input_section.compare("-")) true;
-	else if (input_section.compare("*")) true;
-	else if (input_section.compare("/")) true;
-		
-	Expression* e;
+	if (input_section.compare("NEG")) {
+		int operand = e.top();
+		e.pop();
 
-	return e;
+		exp = new NegOp(operand);
+
+		e.push(exp->evaluate());
+	}
+	else if (input_section.compare("ABS")) {
+		int operand = e.top();
+		e.pop();
+
+		exp = new AbsOp(operand);
+
+		e.push(exp->evaluate());
+	}
+	else if (input_section.compare("+")) {
+		int operand2 = e.top();
+		e.pop();
+
+		int operand1 = e.top();
+		e.pop();
+
+		exp = new AddOp(operand1, operand2);
+
+		e.push(exp->evaluate());
+	}
+	else if (input_section.compare("-")) {
+		int operand2 = e.top();
+		e.pop();
+
+		int operand1 = e.top();
+		e.pop();
+
+		exp = new SubOp(operand1, operand2);
+
+		e.push(exp->evaluate());
+	}
+
+	else if (input_section.compare("*")) {
+		int operand2 = e.top();
+		e.pop();
+
+		int operand1 = e.top();
+		e.pop();
+
+		exp = new MultOp(operand1, operand2);
+
+		e.push(exp->evaluate());
+	}
+
+	else if (input_section.compare("/")) {
+		int operand2 = e.top();
+		e.pop();
+
+		int operand1 = e.top();
+		e.pop();
+
+		exp = new DivOp(operand1, operand2);
+
+		e.push(exp->evaluate());
+	}
 }
 
 void display_result(ExpStack e) {
-	cout << e.top()->evaluate(e) << endl;
+	cout << e.top() << endl;
 }
 
 int main()
 {
 	ExpStack exp_stack;
-	
+
 	string input = "";
 	cin >> input;
 
@@ -117,13 +209,13 @@ int main()
 	int expr_count = count_expressions(input);
 
 	for (int i = 1; i <= expr_count; i++) {
-		string input_section = nth_expression(input, i);
+		string token = nth_expression(input, i);
 
-		if (input_section.compare("NEG") || input_section.compare("ABS") || input_section.compare("+") || input_section.compare("-") || input_section.compare("*") || input_section.compare("/")) {
-			string_to_expression(input_section)->evaluate(exp_stack);
+		if (token.compare("NEG") || token.compare("ABS") || token.compare("+") || token.compare("-") || token.compare("*") || token.compare("/")) {
+			operate(token, exp_stack);
 		}
 		else {
-			exp_stack.push(int_to_expression(stoi(input)));
+			exp_stack.push(stoi(input));
 		}
 	}
 
@@ -131,4 +223,3 @@ int main()
 
 	return 0;
 }
-
