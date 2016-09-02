@@ -3,6 +3,7 @@
 #include <stack>
 #include <string>
 #include <sstream>
+#include "Token.h"
 
 using namespace std;
 
@@ -97,56 +98,39 @@ public:
 
 class NegOp : public UnaryOp {
 public:
-	NegOp(int operand) : UnaryOp(operand) {}
+	NegOp(int operand) : UnaryOp(operand) {
+	}
 
 	int evaluate() {
-		return 0 - _operand;
+		return -1 * _operand;
 	}
 };
-
-string format(string input) {
-	cout << "format() called" << endl;
-
-	return "";
-}
-
-void next_expression() {
-	cout << "next_expression() called" << endl;
-}
-
-// Must be formatted first
-int count_expressions(string input) {
-	cout << "int count_expressions() called" << endl;
-	return 5;
-}
-
-// Count starts from 1
-string nth_expression(string input, int n) {
-	cout << "int nth_expression() called" << endl;
-	return "";
-}
 
 // Create, evaluate, push
 void operate(string input_section, ExpStack &e) {
 	Expression* exp;
 
-	if (input_section.compare("NEG")) {
+	if (input_section.compare("NEG") == 0) {
 		int operand = e.top();
 		e.pop();
 
 		exp = new NegOp(operand);
 
 		e.push(exp->evaluate());
+
+		delete[] exp;
 	}
-	else if (input_section.compare("ABS")) {
+	else if (input_section.compare("ABS") == 0) {
 		int operand = e.top();
 		e.pop();
 
 		exp = new AbsOp(operand);
 
 		e.push(exp->evaluate());
+
+		delete[] exp;
 	}
-	else if (input_section.compare("+")) {
+	else if (input_section.compare("+") == 0) {
 		int operand2 = e.top();
 		e.pop();
 
@@ -156,8 +140,10 @@ void operate(string input_section, ExpStack &e) {
 		exp = new AddOp(operand1, operand2);
 
 		e.push(exp->evaluate());
+
+		delete[] exp;
 	}
-	else if (input_section.compare("-")) {
+	else if (input_section.compare("-") == 0) {
 		int operand2 = e.top();
 		e.pop();
 
@@ -167,9 +153,11 @@ void operate(string input_section, ExpStack &e) {
 		exp = new SubOp(operand1, operand2);
 
 		e.push(exp->evaluate());
+
+		delete[] exp;
 	}
 
-	else if (input_section.compare("*")) {
+	else if (input_section.compare("*") == 0) {
 		int operand2 = e.top();
 		e.pop();
 
@@ -179,9 +167,11 @@ void operate(string input_section, ExpStack &e) {
 		exp = new MultOp(operand1, operand2);
 
 		e.push(exp->evaluate());
+
+		delete[] exp;
 	}
 
-	else if (input_section.compare("/")) {
+	else if (input_section.compare("/") == 0) {
 		int operand2 = e.top();
 		e.pop();
 
@@ -191,6 +181,8 @@ void operate(string input_section, ExpStack &e) {
 		exp = new DivOp(operand1, operand2);
 
 		e.push(exp->evaluate());
+
+		delete[] exp;
 	}
 }
 
@@ -203,20 +195,24 @@ int main()
 	ExpStack exp_stack;
 
 	string input = "";
-	cin >> input;
+	getline(cin, input);
 
 	input = format(input);
-	int expr_count = count_expressions(input);
 
-	for (int i = 1; i <= expr_count; i++) {
-		string token = nth_expression(input, i);
+	int token_count = count_tokens(input);
 
-		if (token.compare("NEG") || token.compare("ABS") || token.compare("+") || token.compare("-") || token.compare("*") || token.compare("/")) {
+	for (int i = 1; i <= token_count; i++) {
+		string token = nth_token(input, i);
+
+		if (token.compare("NEG") == 0 || token.compare("ABS") == 0 || token.compare("+") == 0 || token.compare("-") == 0 || 
+			token.compare("*") == 0 || token.compare("/") == 0) {
 			operate(token, exp_stack);
 		}
+
 		else {
-			exp_stack.push(stoi(input));
+			exp_stack.push(stoi(token));
 		}
+
 	}
 
 	display_result(exp_stack);
