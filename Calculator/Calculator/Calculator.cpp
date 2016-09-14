@@ -4,10 +4,11 @@
 #include <string>
 #include <sstream>
 #include "Token.h"
+#include "To_Postfix.h"
+//TODO: Optimize include
 
 using namespace std;
 
-class Expression;
 typedef stack <int> ExpStack;
 
 class Expression {
@@ -190,22 +191,22 @@ void display_result(ExpStack e) {
 	cout << e.top() << endl;
 }
 
-int main()
-{
+int main() {
 	ExpStack exp_stack;
 
-	string input = "";
-	getline(cin, input);
+	string exp_infix = "";
+	getline(cin, exp_infix);
 
-	input = format(input);
+	exp_infix = format(exp_infix);
 
-	int token_count = count_tokens(input);
+	string exp_postfix = toPostfix(exp_infix);
+
+	int token_count = count_tokens(exp_postfix);
 
 	for (int i = 1; i <= token_count; i++) {
-		string token = nth_token(input, i);
+		string token = nth_token(exp_postfix, i);
 
-		if (token.compare("NEG") == 0 || token.compare("ABS") == 0 || token.compare("+") == 0 || token.compare("-") == 0 || 
-			token.compare("*") == 0 || token.compare("/") == 0) {
+		if (isOperator(token)) {
 			operate(token, exp_stack);
 		}
 
