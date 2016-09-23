@@ -47,3 +47,5 @@ Temporary Items
 .apdisk
 Calculator/Calculator.sdf
 Calculator/Debug/Calculator.pdb
+Calculator/Calculator.sdf
+*.suo

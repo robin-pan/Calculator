@@ -1,0 +1,27 @@
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\bin\Debug\Calculator.exe.config
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\bin\Debug\Calculator.exe
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\bin\Debug\Calculator.pdb
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\obj\Debug\Calculator.csprojResolveAssemblyReference.cache
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\obj\Debug\Calculator.Form1.resources
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\obj\Debug\Calculator.Properties.Resources.resources
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\obj\Debug\Calculator.csproj.GenerateResource.Cache
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\obj\Debug\Calculator.exe
+C:\Users\panro\Documents\GitHub\Snek\Calculator\Calculator\obj\Debug\Calculator.pdb
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\bin\Debug\Calculator.exe.config
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\obj\Debug\Calculator.exe
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\obj\Debug\Calculator.pdb
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\bin\Debug\Calculator.exe
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\bin\Debug\Calculator.pdb
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\obj\Debug\Calculator.csprojResolveAssemblyReference.cache
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\obj\Debug\Calculator.Form1.resources
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\obj\Debug\Calculator.Properties.Resources.resources
+C:\Users\panro\Documents\Visual Studio 2013\Projects\Calculator\Calculator\obj\Debug\Calculator.csproj.GenerateResource.Cache
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\bin\Debug\Calculator.exe.config
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\obj\Debug\Calculator.exe
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\obj\Debug\Calculator.pdb
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\bin\Debug\Calculator.exe
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\bin\Debug\Calculator.pdb
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\obj\Debug\Calculator.csprojResolveAssemblyReference.cache
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\obj\Debug\Calculator.Form1.resources
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\obj\Debug\Calculator.Properties.Resources.resources
+C:\Users\panro\Documents\GitHub\Calculator\Calculator Form\Calculator\obj\Debug\Calculator.csproj.GenerateResource.Cache
