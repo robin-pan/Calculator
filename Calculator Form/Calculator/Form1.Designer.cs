@@ -51,6 +51,7 @@
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
+            this.Wrapper = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -165,10 +166,11 @@
             // 
             // result
             // 
+            this.result.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.result.Font = new System.Drawing.Font("Microsoft Sans Serif", 32F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.result.Location = new System.Drawing.Point(28, 33);
+            this.result.Location = new System.Drawing.Point(19, 37);
             this.result.Name = "result";
-            this.result.Size = new System.Drawing.Size(582, 68);
+            this.result.Size = new System.Drawing.Size(591, 61);
             this.result.TabIndex = 1;
             this.result.TabStop = false;
             this.result.Text = "0";
@@ -255,9 +257,9 @@
             // 
             this.equation.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.equation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.equation.Location = new System.Drawing.Point(28, 12);
+            this.equation.Location = new System.Drawing.Point(19, 18);
             this.equation.Name = "equation";
-            this.equation.Size = new System.Drawing.Size(582, 19);
+            this.equation.Size = new System.Drawing.Size(591, 19);
             this.equation.TabIndex = 21;
             this.equation.TabStop = false;
             this.equation.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -307,15 +309,25 @@
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
+            // Wrapper
+            // 
+            this.Wrapper.Font = new System.Drawing.Font("Microsoft Sans Serif", 44F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Wrapper.Location = new System.Drawing.Point(12, 12);
+            this.Wrapper.Name = "Wrapper";
+            this.Wrapper.Size = new System.Drawing.Size(615, 91);
+            this.Wrapper.TabIndex = 36;
+            this.Wrapper.TabStop = false;
+            this.Wrapper.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(639, 616);
+            this.Controls.Add(this.equation);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button10);
-            this.Controls.Add(this.equation);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonDecimal);
@@ -335,6 +347,8 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.Wrapper);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -370,6 +384,7 @@
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button12;
         private System.Windows.Forms.Button buttonDelete;
+        private System.Windows.Forms.TextBox Wrapper;
 
     }
 }

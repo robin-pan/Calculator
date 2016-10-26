@@ -44,13 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculator\AbsOp.cs" />
+    <Compile Include="Calculator\AddOp.cs" />
+    <Compile Include="Calculator\BinaryOp.cs" />
+    <Compile Include="Calculator\Calculate.cs" />
+    <Compile Include="Calculator\Const.cs" />
+    <Compile Include="Calculator\DivOp.cs" />
+    <Compile Include="Calculator\Expression.cs" />
+    <Compile Include="Calculator\MultOp.cs" />
+    <Compile Include="Calculator\NegOp.cs" />
+    <Compile Include="Calculator\Operation.cs" />
+    <Compile Include="Calculator\SubOp.cs" />
+    <Compile Include="Calculator\UnaryOp.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="Calculator\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -64,6 +76,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
