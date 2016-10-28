@@ -13,249 +13,9 @@ namespace Calculator
 {
     public partial class Form1 : Form
     {
-        // Removes excess leading and trailing whitespace
-        public static string TokenFormat(string input)
-        {
-            int input_len = input.Length;
-
-            string formatted_input = "";
-
-            int start = 0;
-            int end = input_len - 1;
-
-            for (; start < input_len; start++)
-            {
-                if (input[start] != ' ') break;
-            }
-
-            for (; end >= start; end--)
-            {
-                if (input[end] != ' ') break;
-            }
-
-            for (int i = start; i <= end; i++)
-            {
-                formatted_input += input[i];
-            }
-
-            formatted_input += ' ';
-
-            return formatted_input;
-        }
-
-        // Must be formatted first
-        public int TokenGetCount(string input)
-        {
-            int token_count = 0;
-            int str_len = input.Length;
-
-            for (int i = 0; i < str_len; i++)
-            {
-                if (input[i] == ' ')
-                {
-                    token_count++;
-                }
-            }
-
-            return token_count;
-        }
-
-        // Gets the nth space in input
-        int nth_space(string input, int n)
-        {
-            if (n == 0) return -1;
-
-            int len = input.Length;
-
-            for (int i = 0; i < len; i++)
-            {
-                if (input[i] == ' ')
-                {
-                    n--;
-                }
-                if (n == 0)
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        // Gets the nth token in input
-        public string nth_token(string input, int n)
-        {
-            int start = 0;
-            int end = 0;
-
-            string sliced_str = "";
-
-            if (n == 1)
-            {
-                start = 0;
-                end = nth_space(input, 1);
-            }
-            else
-            {
-                start = nth_space(input, n - 1) + 1;
-                end = nth_space(input, n);
-            }
-
-            for (int i = start; i < end; i++)
-            {
-                sliced_str += input[i];
-            }
-
-            return sliced_str;
-        }
-
-        // Determines whether token is an operator
-        bool isOperator(string token)
-        {
-            return token == "NEG" || token == "ABS" || token == "+" || token == "-" ||
-            token == "*" || token == "/" || token == "(" || token == ")";
-        }
-
-        int getOpPriority(string op)
-        {
-            if (op == "NEG" || op == "ABS" || op == "*" || op == "/")
-            {
-                return 2;
-            }
-
-            else if (op == "(")
-            {
-                return -1;
-            }
-
-            else
-            {
-                return 1;
-            }
-        }
-
-        // Converts equation from infix to post fix
-        string toPostfix(string exp_infix) {
-            string[] tokens = exp_infix.Split(' ');
-            int tokenCount = tokens.Count() - 1;
-            string output = "";
-
-            Stack<string> operators = new Stack<string>();
-
-            for (int i = 0; i < tokenCount; i++)
-            {
-                if (!isOperator(tokens[i]))
-                {
-                    output += tokens[i];
-                    output += " ";
-                }
-                else if (tokens[i] == "(")
-                {
-                    operators.Push(tokens[i]);
-                }
-                else if (tokens[i] == ")")
-                {
-                    while (operators.Peek() != "(")
-                    {
-                        output += operators.Pop();
-                        output += " ";
-                    }
-
-                    operators.Pop();
-                    Console.Write("3");
-                }
-                else if (isOperator(tokens[i]))
-                {
-                    Console.Write("4");
-                    while (operators.Count > 0 && getOpPriority(tokens[i]) <= getOpPriority(operators.Peek()))
-                    {
-                        output += operators.Pop();
-                        output += " ";
-                    }
-
-                    operators.Push(tokens[i]);
-                }
-            }
-            while (operators.Count > 0)
-            {
-                output += operators.Pop();
-                output += " ";
-            }
-
-            return output;
-        }
-
-        // Create expression, evaluate it, push onto stack
-        public void operate(string input_section, Stack<int> e)
-        {
-            Expression exp;
-
-            switch (input_section)
-            {
-                case "NEG":
-                    {
-                        int operand = e.Pop();
-
-                        exp = new NegOp(operand);
-
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
-                case "ABS":
-                    {
-                        int operand = e.Pop();
-
-                        exp = new AbsOp(operand);
-
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
-                case "+":
-                    {
-                        int operand2 = e.Pop();
-                        int operand1 = e.Pop();
-
-                        exp = new AddOp(operand1, operand2);
-
-                        e.Push(exp.Evaluate());
-
-                    }
-                    break;
-                case "-":
-                    {
-                        int operand2 = e.Pop();
-                        int operand1 = e.Pop();
-
-                        exp = new SubOp(operand1, operand2);
-
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
-                case "*":
-                    {
-                        int operand2 = e.Pop();
-
-                        int operand1 = e.Pop();
-
-                        exp = new MultOp(operand1, operand2);
-
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
-                case "/":
-                    {
-                        int operand2 = e.Pop();
-
-                        int operand1 = e.Pop();
-
-                        exp = new DivOp(operand1, operand2);
-
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
-            }
-        }
-
+        private static string _input = "";
+        private static bool _digitInputEnabled = true;
+        
         void DisplayResult(Stack<int> e)
         {
             Console.WriteLine(e.Peek());
@@ -284,11 +44,9 @@ namespace Calculator
         {
 
         }
-        
-        string input = "";
 
         // Gets called when any of the digits are clicked on
-        public void numClick(object sender, EventArgs e)
+        public void NumClick(object sender, EventArgs e)
         {   
             // Removes leading 0 in number entry
             if (result.Text == "0")
@@ -302,13 +60,13 @@ namespace Calculator
         }
 
         // Gets called when any of the operators are clicked on
-        private void operatorClick(object sender, EventArgs e)
+        private void OperatorClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
 
             // Adds the data in number entry to equation 
             equation.Text += (result.Text + b.Text);
-            input += (result.Text += " " + b.Text + " ");
+            _input += (result.Text += " " + b.Text + " ");
 
             // Reset data entry with 0
             result.Clear();
@@ -317,34 +75,40 @@ namespace Calculator
 
         private void buttonEquals_Click(object sender, EventArgs e)
         {
-            input += (result.Text + " ");
+            // Add space at the end of equation for evaluation
+            _input += (result.Text + " ");
 
-            Stack<int> exp_stack = new Stack<int>();
+            // 
+            Stack<int> expStack = new Stack<int>();
 
-            string exp_postfix = toPostfix(input);
+            // Converts from postfix to infix 
+            string expPostfix = Calculate.ToPostfix(_input);
 
-            int token_count = TokenGetCount(exp_postfix);
+            // Split postfix expression into its tokens
+            string[] tokens = expPostfix.Split(' ');
+            int tokenCount = tokens.Count() - 1;
 
-            for (int i = 1; i <= token_count; i++)
+            // Tokens are processed in expStack
+            for (int i = 0; i < tokenCount; i++)
             {
-                string token = nth_token(exp_postfix, i);
-
-                if (isOperator(token))
+                if (Calculate.IsOperator(tokens[i]))
                 {
-                    operate(token, exp_stack);
+                    Calculate.Operate(tokens[i], expStack);
                 }
-
                 else
                 {
-                    exp_stack.Push(Int32.Parse(token));
+                    expStack.Push(Int32.Parse(tokens[i]));
                 }
-
             }
 
-            result.Text = exp_stack.Peek().ToString();
+            // Top of expStack is the result
+            result.Text = expStack.Peek().ToString();
 
-
+            // Resets the equation, current result now first entry of subsequent calculations
             equation.Clear();
+
+            _input = result.Text;
+            _input += " ";
         }
 
         // Removes last character from string in number entry
@@ -366,7 +130,7 @@ namespace Calculator
         {
             result.Text = "0";
             equation.Text = "";
-            input = "";
+            _input = "";
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -381,8 +145,8 @@ namespace Calculator
 
         private void button12_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(input.Length);
-            Console.WriteLine(input);
+            Console.WriteLine(_input.Length);
+            Console.WriteLine(_input);
         }
     }
 }
