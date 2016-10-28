@@ -14,8 +14,8 @@ namespace Calculator
     public partial class Form1 : Form
     {
         private static string _input = "";
-        private static bool _digitInputEnabled = true;
-        
+        private static bool _inputRestricted = false;
+
         void DisplayResult(Stack<int> e)
         {
             Console.WriteLine(e.Peek());
@@ -47,7 +47,9 @@ namespace Calculator
 
         // Gets called when any of the digits are clicked on
         public void NumClick(object sender, EventArgs e)
-        {   
+        {
+            if (_inputRestricted == true) return;
+            
             // Removes leading 0 in number entry
             if (result.Text == "0")
             {
@@ -71,12 +73,16 @@ namespace Calculator
             // Reset data entry with 0
             result.Clear();
             result.Text += "0";
+
+            if (_inputRestricted) _inputRestricted = false;
         }
 
         private void buttonEquals_Click(object sender, EventArgs e)
         {
             // Add space at the end of equation for evaluation
             _input += (result.Text + " ");
+
+            // 
 
             // 
             Stack<int> expStack = new Stack<int>();
@@ -109,11 +115,16 @@ namespace Calculator
 
             _input = result.Text;
             _input += " ";
+
+            // Locks numeric input and delete
+            _inputRestricted = true;
         }
 
         // Removes last character from string in number entry
         private void buttonDelete_Click(object sender, EventArgs e)
         {
+            if (_inputRestricted) return;
+            
             if (result.Text.Length <= 1)
             {
                 result.Text = "0";
@@ -123,14 +134,18 @@ namespace Calculator
             {
                 result.Text = result.Text.Substring(0, result.Text.Length - 1);
             }
+
+            _inputRestricted = true;
         }
 
         // Removes all text from both equation and number entry
         private void buttonClear_Click(object sender, EventArgs e)
-        {
+        {   
             result.Text = "0";
             equation.Text = "";
             _input = "";
+
+            if (_inputRestricted) _inputRestricted = false;
         }
 
         private void button10_Click(object sender, EventArgs e)
