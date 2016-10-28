@@ -47,7 +47,6 @@
     <Compile Include="Calculator\AbsOp.cs" />
     <Compile Include="Calculator\AddOp.cs" />
     <Compile Include="Calculator\BinaryOp.cs" />
-    <Compile Include="Calculator\Calculate.cs" />
     <Compile Include="Calculator\Const.cs" />
     <Compile Include="Calculator\DivOp.cs" />
     <Compile Include="Calculator\Expression.cs" />

@@ -15,6 +15,154 @@ namespace Calculator
     {
         private static string _input = "";
         private static bool _inputRestricted = false;
+        private static bool _syntaxError = false;
+
+        // Determines whether token is an operator
+        private bool IsOperator(string token)
+        {
+            return token == "NEG" || token == "ABS" || token == "+" || token == "-" ||
+            token == "*" || token == "/" || token == "(" || token == ")";
+        }
+
+        // Returns the priority of op
+        private int GetOpPriority(string op)
+        {
+            if (op == "NEG" || op == "ABS" || op == "*" || op == "/")
+            {
+                return 2;
+            }
+
+            else if (op == "(")
+            {
+                return -1;
+            }
+
+            else
+            {
+                return 1;
+            }
+        }
+
+        // Converts equation from infix to post fix
+        private string ToPostfix(string expInfix)
+        {
+            string[] tokens = expInfix.Split(' ');
+            int tokenCount = tokens.Count() - 1;
+            string output = "";
+
+            Stack<string> operators = new Stack<string>();
+
+            for (int i = 0; i < tokenCount; i++)
+            {
+                if (!IsOperator(tokens[i]))
+                {
+                    output += tokens[i];
+                    output += " ";
+                }
+                else if (tokens[i] == "(")
+                {
+                    operators.Push(tokens[i]);
+                }
+                else if (tokens[i] == ")")
+                {
+                    while (operators.Peek() != "(")
+                    {
+                        output += operators.Pop();
+                        output += " ";
+                    }
+
+                    operators.Pop();
+                }
+                else if (IsOperator(tokens[i]))
+                {
+                    while (operators.Count > 0 && GetOpPriority(tokens[i]) <= GetOpPriority(operators.Peek()))
+                    {
+                        output += operators.Pop();
+                        output += " ";
+                    }
+
+                    operators.Push(tokens[i]);
+                }
+            }
+            while (operators.Count > 0)
+            {
+                output += operators.Pop();
+                output += " ";
+            }
+
+            return output;
+        }
+
+        // Create expression, evaluate it, push onto stack
+        private void Operate(string inputSection, Stack<int> e)
+        {
+            Expression exp;
+
+            switch (inputSection)
+            {
+                case "NEG":
+                    {
+                        int operand = e.Pop();
+
+                        exp = new NegOp(operand);
+
+                        e.Push(exp.Evaluate());
+                    }
+                    break;
+                case "ABS":
+                    {
+                        int operand = e.Pop();
+
+                        exp = new AbsOp(operand);
+
+                        e.Push(exp.Evaluate());
+                    }
+                    break;
+                case "+":
+                    {
+                        int operand2 = e.Pop();
+                        int operand1 = e.Pop();
+
+                        exp = new AddOp(operand1, operand2);
+
+                        e.Push(exp.Evaluate());
+
+                    }
+                    break;
+                case "-":
+                    {
+                        int operand2 = e.Pop();
+                        int operand1 = e.Pop();
+
+                        exp = new SubOp(operand1, operand2);
+
+                        e.Push(exp.Evaluate());
+                    }
+                    break;
+                case "*":
+                    {
+                        int operand2 = e.Pop();
+
+                        int operand1 = e.Pop();
+
+                        exp = new MultOp(operand1, operand2);
+
+                        e.Push(exp.Evaluate());
+                    }
+                    break;
+                case "/":
+                    {
+                        int operand2 = e.Pop();
+
+                        int operand1 = e.Pop();
+
+                        exp = new DivOp(operand1, operand2);
+
+                        e.Push(exp.Evaluate());
+                    }
+                    break;
+            }
+        }
 
         void DisplayResult(Stack<int> e)
         {
@@ -49,6 +197,7 @@ namespace Calculator
         public void NumClick(object sender, EventArgs e)
         {
             if (_inputRestricted == true) return;
+            if (_syntaxError == true) return;
             
             // Removes leading 0 in number entry
             if (result.Text == "0")
@@ -64,6 +213,8 @@ namespace Calculator
         // Gets called when any of the operators are clicked on
         private void OperatorClick(object sender, EventArgs e)
         {
+            if (_syntaxError) return;
+            
             Button b = (Button)sender;
 
             // Adds the data in number entry to equation 
@@ -83,12 +234,21 @@ namespace Calculator
             _input += (result.Text + " ");
 
             // 
+            if (_input.IndexOf("/ 0") != -1)
+            {
+                result.Text = "SYNTAX ERROR";
+                equation.Text = "";
+                _input = "";
+
+                _syntaxError = true;
+                return;
+            }
 
             // 
             Stack<int> expStack = new Stack<int>();
 
             // Converts from postfix to infix 
-            string expPostfix = Calculate.ToPostfix(_input);
+            string expPostfix = ToPostfix(_input);
 
             // Split postfix expression into its tokens
             string[] tokens = expPostfix.Split(' ');
@@ -97,9 +257,9 @@ namespace Calculator
             // Tokens are processed in expStack
             for (int i = 0; i < tokenCount; i++)
             {
-                if (Calculate.IsOperator(tokens[i]))
+                if (IsOperator(tokens[i]))
                 {
-                    Calculate.Operate(tokens[i], expStack);
+                    Operate(tokens[i], expStack);
                 }
                 else
                 {
@@ -146,6 +306,7 @@ namespace Calculator
             _input = "";
 
             if (_inputRestricted) _inputRestricted = false;
+            if (_syntaxError) _syntaxError = false;
         }
 
         private void button10_Click(object sender, EventArgs e)
