@@ -113,69 +113,76 @@ namespace Calculator
         bool isOperator(string token)
         {
             return token == "NEG" || token == "ABS" || token == "+" || token == "-" ||
-            token == "*" || token == "/";
+            token == "*" || token == "/" || token == "(" || token == ")";
         }
 
-        string queueToString(Queue<string> output) {
-	        string str = "";
+        int getOpPriority(string op)
+        {
+            if (op == "NEG" || op == "ABS" || op == "*" || op == "/")
+            {
+                return 2;
+            }
 
-	        while (output.Count > 0)
-	        {
-	            str += output.Dequeue();
-		        str += (" ");
-	        }
+            else if (op == "(")
+            {
+                return -1;
+            }
 
-	        return str;
+            else
+            {
+                return 1;
+            }
         }
 
         // Converts equation from infix to post fix
         string toPostfix(string exp_infix) {
-	        Stack<Operation> operations = new Stack<Operation>();
-            Queue<string> output = new Queue<string>();
+            string[] tokens = exp_infix.Split(' ');
+            int tokenCount = tokens.Count() - 1;
+            string output = "";
 
-	        int token_count = TokenGetCount(exp_infix);
+            Stack<string> operators = new Stack<string>();
 
-	        for (int i = 1; i <= token_count; i++) {
-		        string token = nth_token(exp_infix, i);
+            for (int i = 0; i < tokenCount; i++)
+            {
+                if (!isOperator(tokens[i]))
+                {
+                    output += tokens[i];
+                    output += " ";
+                }
+                else if (tokens[i] == "(")
+                {
+                    operators.Push(tokens[i]);
+                }
+                else if (tokens[i] == ")")
+                {
+                    while (operators.Peek() != "(")
+                    {
+                        output += operators.Pop();
+                        output += " ";
+                    }
 
-		        if (isOperator(token)) {
-			        Operation o = new Operation(token);
+                    operators.Pop();
+                    Console.Write("3");
+                }
+                else if (isOperator(tokens[i]))
+                {
+                    Console.Write("4");
+                    while (operators.Count > 0 && getOpPriority(tokens[i]) <= getOpPriority(operators.Peek()))
+                    {
+                        output += operators.Pop();
+                        output += " ";
+                    }
 
-			        while ((operations.Count > 0) && (operations.Peek().getPriority() > o.getPriority())) {
-				        output.Enqueue(operations.Peek().getOp());
-				        operations.Pop();
-			        }
+                    operators.Push(tokens[i]);
+                }
+            }
+            while (operators.Count > 0)
+            {
+                output += operators.Pop();
+                output += " ";
+            }
 
-			        operations.Push(o);
-		        }
-
-		        else if (token == "(") {
-
-			        Operation o = new Operation(token);
-			        operations.Push(o);
-		        }
-
-		        else if (token == ")") {
-
-			        while (operations.Peek().getOp() != "(") {
-				        output.Enqueue(operations.Peek().getOp());
-				        operations.Pop();
-			        }
-
-			        operations.Pop();
-		        }
-
-		        else {
-			        output.Enqueue(token);
-		        }
-	        }
-
-	        while (operations.Count > 0) {
-		        output.Enqueue(operations.Peek().getOp());
-		        operations.Pop();
-	        }
-
-            return queueToString(output);
+            return output;
         }
 
         // Create expression, evaluate it, push onto stack
@@ -312,7 +319,7 @@ namespace Calculator
         {
             input += (result.Text + " ");
 
-            /*Stack<int> exp_stack = new Stack<int>();
+            Stack<int> exp_stack = new Stack<int>();
 
             string exp_postfix = toPostfix(input);
 
@@ -334,9 +341,8 @@ namespace Calculator
 
             }
 
-            result.Text = exp_stack.Peek().ToString();*/
+            result.Text = exp_stack.Peek().ToString();
 
-            Console.WriteLine(toPostfix("1 - 2 + 3 - 4 + 5 "));
 
             equation.Clear();
         }
