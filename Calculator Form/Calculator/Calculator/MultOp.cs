@@ -1,9 +1,9 @@
 ﻿namespace Calculator
 {
     public class MultOp : BinaryOp {
-        public MultOp(int operand1, int operand2) : base(operand1, operand2) {}
+        public MultOp(double operand1, double operand2) : base(operand1, operand2) {}
 
-        public override int Evaluate()
+        public override double Evaluate()
         {
             return Operand1 * Operand2;
         }

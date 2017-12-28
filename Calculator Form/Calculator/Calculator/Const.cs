@@ -1,13 +1,13 @@
 ﻿namespace Calculator
 {
     class Const : Expression {
-        protected int _value;
+        protected double _value;
 
-        protected Const(int value) : base() {
+        protected Const(double value) : base() {
             _value = value;
         }
 
-        public override int Evaluate() {
+        public override double Evaluate() {
             return _value;
         }
     };

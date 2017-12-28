@@ -15,17 +15,18 @@ namespace Calculator
     {
         private static string _input = "";
         private static bool _inputRestricted = false;
+        private static bool _decimalClicked = false;
         private static bool _syntaxError = false;
 
         // Determines whether token is an operator
-        private bool IsOperator(string token)
+        private static bool IsOperator(string token)
         {
             return token == "NEG" || token == "ABS" || token == "+" || token == "-" ||
             token == "*" || token == "/" || token == "(" || token == ")";
         }
 
         // Returns the priority of op
-        private int GetOpPriority(string op)
+        private static int GetOpPriority(string op)
         {
             if (op == "NEG" || op == "ABS" || op == "*" || op == "/")
             {
@@ -44,7 +45,7 @@ namespace Calculator
         }
 
         // Converts equation from infix to post fix
-        private string ToPostfix(string expInfix)
+        private static string ToPostfix(string expInfix)
         {
             string[] tokens = expInfix.Split(' ');
             int tokenCount = tokens.Count() - 1;
@@ -94,7 +95,7 @@ namespace Calculator
         }
 
         // Create expression, evaluate it, push onto stack
-        private void Operate(string inputSection, Stack<int> e)
+        private static void Operate(string inputSection, Stack<double> e)
         {
             Expression exp;
 
@@ -102,7 +103,7 @@ namespace Calculator
             {
                 case "NEG":
                     {
-                        int operand = e.Pop();
+                        double operand = e.Pop();
 
                         exp = new NegOp(operand);
 
@@ -111,7 +112,7 @@ namespace Calculator
                     break;
                 case "ABS":
                     {
-                        int operand = e.Pop();
+                        double operand = e.Pop();
 
                         exp = new AbsOp(operand);
 
@@ -120,8 +121,8 @@ namespace Calculator
                     break;
                 case "+":
                     {
-                        int operand2 = e.Pop();
-                        int operand1 = e.Pop();
+                        double operand2 = e.Pop();
+                        double operand1 = e.Pop();
 
                         exp = new AddOp(operand1, operand2);
 
@@ -131,8 +132,8 @@ namespace Calculator
                     break;
                 case "-":
                     {
-                        int operand2 = e.Pop();
-                        int operand1 = e.Pop();
+                        double operand2 = e.Pop();
+                        double operand1 = e.Pop();
 
                         exp = new SubOp(operand1, operand2);
 
@@ -141,9 +142,9 @@ namespace Calculator
                     break;
                 case "*":
                     {
-                        int operand2 = e.Pop();
+                        double operand2 = e.Pop();
 
-                        int operand1 = e.Pop();
+                        double operand1 = e.Pop();
 
                         exp = new MultOp(operand1, operand2);
 
@@ -152,9 +153,9 @@ namespace Calculator
                     break;
                 case "/":
                     {
-                        int operand2 = e.Pop();
+                        double operand2 = e.Pop();
 
-                        int operand1 = e.Pop();
+                        double operand1 = e.Pop();
 
                         exp = new DivOp(operand1, operand2);
 
@@ -162,11 +163,6 @@ namespace Calculator
                     }
                     break;
             }
-        }
-
-        void DisplayResult(Stack<int> e)
-        {
-            Console.WriteLine(e.Peek());
         }
         
         public Form1()
@@ -193,21 +189,23 @@ namespace Calculator
 
         }
 
-        // Gets called when any of the digits are clicked on
+        // Gets called when any of the digits or decimals are clicked on
         public void NumClick(object sender, EventArgs e)
         {
             if (_inputRestricted == true) return;
             if (_syntaxError == true) return;
             
-            // Removes leading 0 in number entry
-            if (result.Text == "0")
-            {
-                result.Clear();
-            }
-
-            // Appends clicked character to number entry string
             Button b = (Button)sender;
+
+            if (_decimalClicked && b.Text == @".") return;
+
+            // Removes leading 0 in number entry
+            if (result.Text == @"0" && b.Text != @".") result.Clear();
+
+            // Appends clicked character to number entry 
             result.Text += b.Text;
+
+            if (!_decimalClicked && b.Text == @".") _decimalClicked = true;
         }
 
         // Gets called when any of the operators are clicked on
@@ -219,24 +217,27 @@ namespace Calculator
 
             // Adds the data in number entry to equation 
             equation.Text += (result.Text + b.Text);
-            _input += (result.Text += " " + b.Text + " ");
+            _input += (result.Text += @" " + b.Text + @" ");
 
             // Reset data entry with 0
             result.Clear();
-            result.Text += "0";
+            result.Text += @"0";
 
-            if (_inputRestricted) _inputRestricted = false;
+            _inputRestricted = false;
+            _decimalClicked = false;
         }
 
         private void buttonEquals_Click(object sender, EventArgs e)
         {
+            if (_syntaxError) return;
+            
             // Add space at the end of equation for evaluation
             _input += (result.Text + " ");
 
             // 
-            if (_input.IndexOf("/ 0") != -1)
+            if (_input.IndexOf("/ 0", StringComparison.Ordinal) != -1)
             {
-                result.Text = "SYNTAX ERROR";
+                result.Text = @"SYNTAX ERROR";
                 equation.Text = "";
                 _input = "";
 
@@ -245,7 +246,7 @@ namespace Calculator
             }
 
             // 
-            Stack<int> expStack = new Stack<int>();
+            Stack<double> expStack = new Stack<double>();
 
             // Converts from postfix to infix 
             string expPostfix = ToPostfix(_input);
@@ -263,7 +264,7 @@ namespace Calculator
                 }
                 else
                 {
-                    expStack.Push(Int32.Parse(tokens[i]));
+                    expStack.Push(double.Parse(tokens[i]));
                 }
             }
 
@@ -278,35 +279,29 @@ namespace Calculator
 
             // Locks numeric input and delete
             _inputRestricted = true;
+            _decimalClicked = false;
         }
 
         // Removes last character from string in number entry
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             if (_inputRestricted) return;
-            
-            if (result.Text.Length <= 1)
-            {
-                result.Text = "0";
-            }
-    
-            else
-            {
-                result.Text = result.Text.Substring(0, result.Text.Length - 1);
-            }
+            if (_syntaxError) return;
 
-            _inputRestricted = true;
+            if (result.Text[result.Text.Length - 1] == '.') _decimalClicked = false; 
+            if (result != null) result.Text = result.Text.Length <= 1 ? @"0" : result.Text.Substring(0, result.Text.Length - 1);
         }
 
         // Removes all text from both equation and number entry
         private void buttonClear_Click(object sender, EventArgs e)
-        {   
-            result.Text = "0";
-            equation.Text = "";
+        {
+            if (result != null) result.Text = @"0";
+            if (equation != null) equation.Text = "";
             _input = "";
 
             if (_inputRestricted) _inputRestricted = false;
             if (_syntaxError) _syntaxError = false;
+            _decimalClicked = false;
         }
 
         private void button10_Click(object sender, EventArgs e)
