@@ -345,6 +345,12 @@ namespace Calculator
         }
 
         // Removes all text from both equation and number entry
+        private void buttonClearEntry_Click(object sender, EventArgs e)
+        {
+            if (result != null) result.Text = @"0";
+        }
+
+        // Removes all text from both equation and number entry
         private void buttonClear_Click(object sender, EventArgs e)
         {
             if (result != null) result.Text = @"0";
