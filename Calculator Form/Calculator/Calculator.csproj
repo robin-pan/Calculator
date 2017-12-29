@@ -52,6 +52,7 @@
     <Compile Include="Calculator\Expression.cs" />
     <Compile Include="Calculator\MultOp.cs" />
     <Compile Include="Calculator\NegOp.cs" />
+    <Compile Include="Calculator\State.cs" />
     <Compile Include="Calculator\SubOp.cs" />
     <Compile Include="Calculator\UnaryOp.cs" />
     <Compile Include="Form1.cs">

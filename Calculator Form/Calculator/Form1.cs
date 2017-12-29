@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,11 +14,74 @@ namespace Calculator
 {
     public partial class Form1 : Form
     {
-        private static string _input = "";
-        private static bool _inputRestricted = false;
-        private static bool _decimalClicked = false;
-        private static bool _syntaxError = false;
+        private static Hashtable states = new Hashtable()
+        {
+            {"AOND", new State("AOND", false)},
+            {"AON", new State("AON", true)},
+            {"PC", new State("PC", false)}
+        };
 
+        // Transitions to new state based on input
+        private bool transition(string input)
+        {
+            switch (_currentState._name)
+            {
+                case "AOND":
+                    {
+                        if (input == "num") _currentState = (State)states["AOND"];
+                        else if (input == "dec") _currentState = (State)states["AON"];
+                        else if (input == "del num") _currentState = (State)states["AOND"];
+                        else if (input == "op") _currentState = (State)states["AOND"];
+                        else if (input == "eq") _currentState = (State)states["PC"];
+                        else return false;
+                    }
+                    break;
+                case "AON":
+                    {
+                        if (input == "num") _currentState = (State)states["AON"];
+                        else if (input == "del num") _currentState = (State)states["AON"];
+                        else if (input == "del dec") _currentState = (State)states["AOND"];
+                        else if (input == "op") _currentState = (State)states["AOND"];
+                        else if (input == "eq") _currentState = (State)states["PC"];
+                        else return false;
+                    }
+                    break;
+                case "PC":
+                    {
+                        if (input == "num")
+                        {
+                            _currentState = (State)states["AOND"];
+                            result.Text = @"0";
+                        }
+                        else if (input == "dec")
+                        {
+                            _currentState = (State)states["AON"];
+                            result.Text = @"0";
+                        }
+                        else if (input == "op")
+                        {
+                            _currentState = (State)states["AOND"];
+                        }
+                        else if (input == "eq")
+                        {
+                            _currentState = (State)states["PC"];
+                        }
+                        else if (input == "del num" || input == "del dec")
+                        {
+                            _currentState = (State)states["AOND"];
+                            result.Text = @"0";
+                        }
+                        else return false;
+                    }
+                    break;
+                }
+
+                return true;
+        }
+
+        private static State _currentState = (State)states["AOND"];
+        private static string _input = "";
+        
         // Determines whether token is an operator
         private static bool IsOperator(string token)
         {
@@ -189,30 +253,36 @@ namespace Calculator
 
         }
 
-        // Gets called when any of the digits or decimals are clicked on
+        // Gets called when any of the digits are clicked on
         public void NumClick(object sender, EventArgs e)
         {
-            if (_inputRestricted == true) return;
-            if (_syntaxError == true) return;
+            if (!transition("num")) return;
             
             Button b = (Button)sender;
 
-            if (_decimalClicked && b.Text == @".") return;
-
             // Removes leading 0 in number entry
-            if (result.Text == @"0" && b.Text != @".") result.Clear();
+            if (result.Text == @"0") result.Clear();
 
             // Appends clicked character to number entry 
             result.Text += b.Text;
+        }
 
-            if (!_decimalClicked && b.Text == @".") _decimalClicked = true;
+        // Gets called when any of the decimal is clicked on
+        public void DecimalClick(object sender, EventArgs e)
+        {
+            if (_currentState._decimalLocked || !transition("dec")) return;
+            
+            Button b = (Button)sender;
+
+            // Appends clicked character to number entry 
+            result.Text += b.Text;
         }
 
         // Gets called when any of the operators are clicked on
         private void OperatorClick(object sender, EventArgs e)
         {
-            if (_syntaxError) return;
-            
+            if (!transition("op")) return;
+
             Button b = (Button)sender;
 
             // Adds the data in number entry to equation 
@@ -220,30 +290,15 @@ namespace Calculator
             _input += (result.Text += @" " + b.Text + @" ");
 
             // Reset data entry with 0
-            result.Clear();
-            result.Text += @"0";
-
-            _inputRestricted = false;
-            _decimalClicked = false;
+            result.Text = @"0";
         }
 
         private void buttonEquals_Click(object sender, EventArgs e)
         {
-            if (_syntaxError) return;
+            if (!transition("eq")) return;
             
             // Add space at the end of equation for evaluation
             _input += (result.Text + " ");
-
-            // 
-            if (_input.IndexOf("/ 0", StringComparison.Ordinal) != -1)
-            {
-                result.Text = @"SYNTAX ERROR";
-                equation.Text = "";
-                _input = "";
-
-                _syntaxError = true;
-                return;
-            }
 
             // 
             Stack<double> expStack = new Stack<double>();
@@ -276,19 +331,16 @@ namespace Calculator
 
             _input = result.Text;
             _input += " ";
-
-            // Locks numeric input and delete
-            _inputRestricted = true;
-            _decimalClicked = false;
         }
 
         // Removes last character from string in number entry
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            if (_inputRestricted) return;
-            if (_syntaxError) return;
+            char lastChar = result.Text[result.Text.Length - 1];
 
-            if (result.Text[result.Text.Length - 1] == '.') _decimalClicked = false; 
+            if (lastChar != '.' && !transition("del num")) return;
+            else if (lastChar == '.' && !transition("del dec")) return;
+            
             if (result != null) result.Text = result.Text.Length <= 1 ? @"0" : result.Text.Substring(0, result.Text.Length - 1);
         }
 
@@ -298,10 +350,6 @@ namespace Calculator
             if (result != null) result.Text = @"0";
             if (equation != null) equation.Text = "";
             _input = "";
-
-            if (_inputRestricted) _inputRestricted = false;
-            if (_syntaxError) _syntaxError = false;
-            _decimalClicked = false;
         }
 
         private void button10_Click(object sender, EventArgs e)

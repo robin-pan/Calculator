@@ -241,7 +241,7 @@
             this.buttonDecimal.TabStop = false;
             this.buttonDecimal.Text = ".";
             this.buttonDecimal.UseVisualStyleBackColor = true;
-            this.buttonDecimal.Click += new System.EventHandler(this.NumClick);
+            this.buttonDecimal.Click += new System.EventHandler(this.DecimalClick);
             // 
             // buttonClear
             // 
