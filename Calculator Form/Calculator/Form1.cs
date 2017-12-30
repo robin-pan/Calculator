@@ -275,26 +275,25 @@ namespace Calculator
             result.Text += b.Text;
         }
 
-        // Gets called when any of the operators are clicked on
-        private void OperatorClick(object sender, EventArgs e)
+        public void BracketClick(object sender, EventArgs e)
         {
             if (!Transition("op")) return;
 
             Button b = (Button)sender;
-
-            if (b.Text == "(") 
+            
+            if (b.Text == "(")
             {
                 equation.Text += @"(";
                 _input += (@"( ");
             }
             else if (b.Text == ")")
             {
-                if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')') 
+                if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
                 {
                     equation.Text += @")";
                     _input += @") ";
                 }
-                else 
+                else
                 {
                     equation.Text += result.Text + @")";
                     _input += result.Text + @" ) ";
@@ -303,7 +302,39 @@ namespace Calculator
                 // Reset data entry with 0
                 result.Text = @"0";
             }
-            else if (b.Text == "+/-") 
+        }
+
+        // Gets called when any of the binary operators are clicked on
+        private void BinaryOperatorClick(object sender, EventArgs e)
+        {
+            if (!Transition("op")) return;
+
+            Button b = (Button)sender;
+
+            // Adds the data in number entry to equation 
+            if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
+            {
+                equation.Text += b.Text;
+                _input += b.Text + @" ";
+            }
+            else
+            {
+                equation.Text += (result.Text + b.Text);
+                _input += (result.Text += @" " + b.Text + @" ");
+            }
+
+            // Reset data entry with 0
+            result.Text = @"0";
+        }
+
+        // Gets called when any of the unary operators are clicked on
+        private void UnaryOperatorClick(object sender, EventArgs e)
+        {
+            if (!Transition("op")) return;
+
+            Button b = (Button)sender;
+
+            if (b.Text == "+/-")
             {
                 if (result.Text != "0")
                 {
@@ -311,22 +342,9 @@ namespace Calculator
                     else if (result.Text[0] != '-') result.Text = "-" + result.Text;
                 }
             }
-            else 
+            else
             {
-                // Adds the data in number entry to equation 
-                if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')') 
-                {
-                    equation.Text += b.Text;
-                    _input += b.Text + @" ";
-                }
-                else 
-                {
-                     equation.Text += (result.Text + b.Text);
-                    _input += (result.Text += @" " + b.Text + @" ");
-                }
-
-                // Reset data entry with 0
-                result.Text = @"0";
+                
             }
         }
 

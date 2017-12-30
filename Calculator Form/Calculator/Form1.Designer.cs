@@ -190,7 +190,7 @@
             this.buttonDivide.TabStop = false;
             this.buttonDivide.Text = "/";
             this.buttonDivide.UseVisualStyleBackColor = true;
-            this.buttonDivide.Click += new System.EventHandler(this.OperatorClick);
+            this.buttonDivide.Click += new System.EventHandler(this.BinaryOperatorClick);
             // 
             // buttonAdd
             // 
@@ -201,7 +201,7 @@
             this.buttonAdd.TabStop = false;
             this.buttonAdd.Text = "+";
             this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.OperatorClick);
+            this.buttonAdd.Click += new System.EventHandler(this.BinaryOperatorClick);
             // 
             // buttonSubtract
             // 
@@ -212,7 +212,7 @@
             this.buttonSubtract.TabStop = false;
             this.buttonSubtract.Text = "-";
             this.buttonSubtract.UseVisualStyleBackColor = true;
-            this.buttonSubtract.Click += new System.EventHandler(this.OperatorClick);
+            this.buttonSubtract.Click += new System.EventHandler(this.BinaryOperatorClick);
             // 
             // buttonMultiply
             // 
@@ -223,7 +223,7 @@
             this.buttonMultiply.TabStop = false;
             this.buttonMultiply.Text = "*";
             this.buttonMultiply.UseVisualStyleBackColor = true;
-            this.buttonMultiply.Click += new System.EventHandler(this.OperatorClick);
+            this.buttonMultiply.Click += new System.EventHandler(this.BinaryOperatorClick);
             // 
             // button0
             // 
@@ -344,7 +344,7 @@
             this.button14.TabStop = false;
             this.button14.Text = ")";
             this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.OperatorClick);
+            this.button14.Click += new System.EventHandler(this.BracketClick);
             // 
             // button15
             // 
@@ -355,7 +355,7 @@
             this.button15.TabStop = false;
             this.button15.Text = "(";
             this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.OperatorClick);
+            this.button15.Click += new System.EventHandler(this.BracketClick);
             // 
             // button16
             // 
@@ -366,7 +366,7 @@
             this.button16.TabStop = false;
             this.button16.Text = "+/-";
             this.button16.UseVisualStyleBackColor = true;
-            this.button16.Click += new System.EventHandler(this.OperatorClick);
+            this.button16.Click += new System.EventHandler(this.UnaryOperatorClick);
             // 
             // Form1
             // 
