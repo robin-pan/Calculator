@@ -190,20 +190,6 @@ namespace Calculator
 
             switch (inputSection)
             {
-                case "NEG":
-                    {
-                        double operand = e.Pop();
-                        exp = new NegOp(operand);
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
-                case "ABS":
-                    {
-                        double operand = e.Pop();
-                        exp = new AbsOp(operand);
-                        e.Push(exp.Evaluate());
-                    }
-                    break;
                 case "+":
                     {
                         double operand2 = e.Pop();
@@ -316,6 +302,14 @@ namespace Calculator
 
                 // Reset data entry with 0
                 result.Text = @"0";
+            }
+            else if (b.Text == "+/-") 
+            {
+                if (result.Text != "0")
+                {
+                    if (result.Text[0] == '-') result.Text = result.Text.Substring(1, result.Text.Length - 1);
+                    else if (result.Text[0] != '-') result.Text = "-" + result.Text;
+                }
             }
             else 
             {

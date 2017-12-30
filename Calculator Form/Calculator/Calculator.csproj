@@ -44,14 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calculator\AbsOp.cs" />
     <Compile Include="Calculator\AddOp.cs" />
     <Compile Include="Calculator\BinaryOp.cs" />
     <Compile Include="Calculator\Const.cs" />
     <Compile Include="Calculator\DivOp.cs" />
     <Compile Include="Calculator\Expression.cs" />
     <Compile Include="Calculator\MultOp.cs" />
-    <Compile Include="Calculator\NegOp.cs" />
     <Compile Include="Calculator\State.cs" />
     <Compile Include="Calculator\SubOp.cs" />
     <Compile Include="Calculator\UnaryOp.cs" />
