@@ -373,6 +373,7 @@ namespace Calculator
             else if (lastChar == '.' && !Transition("del dec")) return;
             
             if (result != null) result.Text = result.Text.Length <= 1 ? @"0" : result.Text.Substring(0, result.Text.Length - 1);
+            if (result.Text == @"-") result.Text = @"0";
         }
 
         // Removes all text from both equation and number entry
