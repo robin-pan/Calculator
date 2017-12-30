@@ -22,7 +22,7 @@ namespace Calculator
         };
 
         // Transitions to new state based on input
-        private bool transition(string input)
+        private bool Transition(string input)
         {
             switch (_currentState._name)
             {
@@ -48,6 +48,8 @@ namespace Calculator
                     break;
                 case "PC":
                     {
+                        _input = "";
+                        
                         if (input == "num")
                         {
                             _currentState = (State)states["AOND"];
@@ -158,6 +160,29 @@ namespace Calculator
             return output;
         }
 
+        // Takes string expression and simplifies to single number
+        private static String Evaluate(String input)
+        {
+            Stack<double> expStack = new Stack<double>();
+
+            // Converts from postfix to infix 
+            string expPostfix = ToPostfix(input);
+
+            // Split postfix expression into its tokens
+            string[] tokens = expPostfix.Split(' ');
+            int tokenCount = tokens.Count() - 1;
+
+            // Tokens are processed in expStack
+            for (int i = 0; i < tokenCount; i++)
+            {
+                if (IsOperator(tokens[i])) Operate(tokens[i], expStack);
+                else expStack.Push(double.Parse(tokens[i]));
+            }
+
+            // Top of expStack is the result
+            return expStack.Peek().ToString();
+        }
+
         // Create expression, evaluate it, push onto stack
         private static void Operate(string inputSection, Stack<double> e)
         {
@@ -168,18 +193,14 @@ namespace Calculator
                 case "NEG":
                     {
                         double operand = e.Pop();
-
                         exp = new NegOp(operand);
-
                         e.Push(exp.Evaluate());
                     }
                     break;
                 case "ABS":
                     {
                         double operand = e.Pop();
-
                         exp = new AbsOp(operand);
-
                         e.Push(exp.Evaluate());
                     }
                     break;
@@ -187,9 +208,7 @@ namespace Calculator
                     {
                         double operand2 = e.Pop();
                         double operand1 = e.Pop();
-
                         exp = new AddOp(operand1, operand2);
-
                         e.Push(exp.Evaluate());
 
                     }
@@ -198,31 +217,23 @@ namespace Calculator
                     {
                         double operand2 = e.Pop();
                         double operand1 = e.Pop();
-
                         exp = new SubOp(operand1, operand2);
-
                         e.Push(exp.Evaluate());
                     }
                     break;
                 case "*":
                     {
                         double operand2 = e.Pop();
-
                         double operand1 = e.Pop();
-
                         exp = new MultOp(operand1, operand2);
-
                         e.Push(exp.Evaluate());
                     }
                     break;
                 case "/":
                     {
                         double operand2 = e.Pop();
-
                         double operand1 = e.Pop();
-
                         exp = new DivOp(operand1, operand2);
-
                         e.Push(exp.Evaluate());
                     }
                     break;
@@ -256,7 +267,7 @@ namespace Calculator
         // Gets called when any of the digits are clicked on
         public void NumClick(object sender, EventArgs e)
         {
-            if (!transition("num")) return;
+            if (!Transition("num")) return;
             
             Button b = (Button)sender;
 
@@ -270,7 +281,7 @@ namespace Calculator
         // Gets called when any of the decimal is clicked on
         public void DecimalClick(object sender, EventArgs e)
         {
-            if (_currentState._decimalLocked || !transition("dec")) return;
+            if (_currentState._decimalLocked || !Transition("dec")) return;
             
             Button b = (Button)sender;
 
@@ -281,56 +292,64 @@ namespace Calculator
         // Gets called when any of the operators are clicked on
         private void OperatorClick(object sender, EventArgs e)
         {
-            if (!transition("op")) return;
+            if (!Transition("op")) return;
 
             Button b = (Button)sender;
 
-            // Adds the data in number entry to equation 
-            equation.Text += (result.Text + b.Text);
-            _input += (result.Text += @" " + b.Text + @" ");
+            if (b.Text == "(") 
+            {
+                equation.Text += @"(";
+                _input += (@"( ");
+            }
+            else if (b.Text == ")")
+            {
+                if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')') 
+                {
+                    equation.Text += @")";
+                    _input += @") ";
+                }
+                else 
+                {
+                    equation.Text += result.Text + @")";
+                    _input += result.Text + @" ) ";
+                }
 
-            // Reset data entry with 0
-            result.Text = @"0";
+                // Reset data entry with 0
+                result.Text = @"0";
+            }
+            else 
+            {
+                // Adds the data in number entry to equation 
+                if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')') 
+                {
+                    equation.Text += b.Text;
+                    _input += b.Text + @" ";
+                }
+                else 
+                {
+                     equation.Text += (result.Text + b.Text);
+                    _input += (result.Text += @" " + b.Text + @" ");
+                }
+
+                // Reset data entry with 0
+                result.Text = @"0";
+            }
         }
 
         private void buttonEquals_Click(object sender, EventArgs e)
-        {
-            if (!transition("eq")) return;
+        {            
+            if (!Transition("eq")) return;
             
             // Add space at the end of equation for evaluation
-            _input += (result.Text + " ");
-
-            // 
-            Stack<double> expStack = new Stack<double>();
-
-            // Converts from postfix to infix 
-            string expPostfix = ToPostfix(_input);
-
-            // Split postfix expression into its tokens
-            string[] tokens = expPostfix.Split(' ');
-            int tokenCount = tokens.Count() - 1;
-
-            // Tokens are processed in expStack
-            for (int i = 0; i < tokenCount; i++)
-            {
-                if (IsOperator(tokens[i]))
-                {
-                    Operate(tokens[i], expStack);
-                }
-                else
-                {
-                    expStack.Push(double.Parse(tokens[i]));
-                }
-            }
+            if (_input.Length == 0 || (_input.Length > 0 && _input[_input.Length - 2] != ')')) _input += (result.Text + " ");
 
             // Top of expStack is the result
-            result.Text = expStack.Peek().ToString();
+            result.Text = Evaluate(_input).ToString();
 
             // Resets the equation, current result now first entry of subsequent calculations
             equation.Clear();
 
-            _input = result.Text;
-            _input += " ";
+            _input = result.Text + " ";
         }
 
         // Removes last character from string in number entry
@@ -338,8 +357,8 @@ namespace Calculator
         {
             char lastChar = result.Text[result.Text.Length - 1];
 
-            if (lastChar != '.' && !transition("del num")) return;
-            else if (lastChar == '.' && !transition("del dec")) return;
+            if (lastChar != '.' && !Transition("del num")) return;
+            else if (lastChar == '.' && !Transition("del dec")) return;
             
             if (result != null) result.Text = result.Text.Length <= 1 ? @"0" : result.Text.Substring(0, result.Text.Length - 1);
         }
