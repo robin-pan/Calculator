@@ -39,6 +39,7 @@ namespace Calculator
                         else if (input == "eq") _currentState = (State)states["PC"];
                         else if (input == "op brack") _currentState = (State)states["AOND"];
                         else if (input == "cl brack") _currentState = (State)states["AO"];
+                        else if (input == "neg") _currentState = (State)states["AOND"];
                         else return false;
                     }
                     break;
@@ -52,6 +53,7 @@ namespace Calculator
                         else if (input == "eq") _currentState = (State)states["PC"];
                         else if (input == "op brack") _currentState = (State)states["AON"];
                         else if (input == "cl brack") _currentState = (State)states["AO"];
+                        else if (input == "neg") _currentState = (State)states["AON"];
                         else return false;
                     }
                     break;
@@ -71,13 +73,17 @@ namespace Calculator
                         }
                         else if (input == "bin op") _currentState = (State)states["AOND"];
                         else if (input == "un op") _currentState = (State)states["AOND"];
-                        else if (input == "eq") _currentState = (State)states["PC"];
                         else if (input == "del num" || input == "del dec")
                         {
                             _currentState = (State)states["AOND"];
                             result.Text = @"0";
                         }
                         else if (input == "op brack")
+                        {
+                            if (result.Text.IndexOf(".") >= 0) _currentState = (State)states["AON"];
+                            else _currentState = (State)states["AOND"];
+                        }
+                        else if (input == "neg")
                         {
                             if (result.Text.IndexOf(".") >= 0) _currentState = (State)states["AON"];
                             else _currentState = (State)states["AOND"];
@@ -103,6 +109,7 @@ namespace Calculator
                         if (input == "num") _currentState = (State)states["AON"];
                         else if (input == "del num") _currentState = (State)states["AON"];
                         else if (input == "del dec") _currentState = (State)states["AOND"];
+                        else if (input == "neg") _currentState = (State)states["AN"];
                         else return false;
                     }
                     break;
@@ -365,25 +372,21 @@ namespace Calculator
             result.Text = @"0";
         }
 
+        private void NegateOperatorClick(object sender, EventArgs e)
+        {
+            if (!Transition("neg")) return;
+
+            if (result.Text != "0")
+            {
+                if (result.Text[0] == '-') result.Text = result.Text.Substring(1, result.Text.Length - 1);
+                else if (result.Text[0] != '-') result.Text = "-" + result.Text;
+            }
+        }
+
         // Gets called when any of the unary operators are clicked on
         private void UnaryOperatorClick(object sender, EventArgs e)
         {
-            if (!Transition("un op")) return;
 
-            Button b = (Button)sender;
-
-            if (b.Text == "+/-")
-            {
-                if (result.Text != "0")
-                {
-                    if (result.Text[0] == '-') result.Text = result.Text.Substring(1, result.Text.Length - 1);
-                    else if (result.Text[0] != '-') result.Text = "-" + result.Text;
-                }
-            }
-            else
-            {
-                
-            }
         }
 
         private void buttonEquals_Click(object sender, EventArgs e)

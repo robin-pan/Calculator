@@ -366,7 +366,7 @@
             this.button16.TabStop = false;
             this.button16.Text = "+/-";
             this.button16.UseVisualStyleBackColor = true;
-            this.button16.Click += new System.EventHandler(this.UnaryOperatorClick);
+            this.button16.Click += new System.EventHandler(this.NegateOperatorClick);
             // 
             // Form1
             // 
