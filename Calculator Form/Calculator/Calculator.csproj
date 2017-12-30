@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculator\AbsOp.cs" />
     <Compile Include="Calculator\AddOp.cs" />
     <Compile Include="Calculator\BinaryOp.cs" />
     <Compile Include="Calculator\Const.cs" />

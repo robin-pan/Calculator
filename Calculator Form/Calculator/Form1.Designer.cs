@@ -56,6 +56,7 @@
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
+            this.button17 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -344,7 +345,7 @@
             this.button14.TabStop = false;
             this.button14.Text = ")";
             this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.BracketClick);
+            this.button14.Click += new System.EventHandler(this.BracketOperatorClick);
             // 
             // button15
             // 
@@ -355,7 +356,7 @@
             this.button15.TabStop = false;
             this.button15.Text = "(";
             this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.BracketClick);
+            this.button15.Click += new System.EventHandler(this.BracketOperatorClick);
             // 
             // button16
             // 
@@ -368,11 +369,23 @@
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.NegateOperatorClick);
             // 
+            // button17
+            // 
+            this.button17.Location = new System.Drawing.Point(241, 366);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(66, 65);
+            this.button17.TabIndex = 41;
+            this.button17.TabStop = false;
+            this.button17.Text = "abs";
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.UnaryOperatorClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(639, 616);
+            this.Controls.Add(this.button17);
             this.Controls.Add(this.button16);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button14);
@@ -442,6 +455,7 @@
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button button16;
+        private System.Windows.Forms.Button button17;
 
     }
 }

@@ -126,7 +126,7 @@ namespace Calculator
         // Determines whether token is an operator
         private static bool IsOperator(string token)
         {
-            return token == "NEG" || token == "ABS" || token == "+" || token == "-" ||
+            return token == "abs" || token == "+" || token == "-" ||
             token == "*" || token == "/" || token == "(" || token == ")";
         }
 
@@ -229,6 +229,14 @@ namespace Calculator
 
             switch (inputSection)
             {
+                case "abs":
+                    {
+                        double operand = e.Pop();
+                        exp = new AbsOp(operand);
+                        e.Push(exp.Evaluate());
+
+                    }
+                    break;
                 case "+":
                     {
                         double operand2 = e.Pop();
@@ -314,14 +322,25 @@ namespace Calculator
             result.Text += b.Text;
         }
 
-        public void BracketClick(object sender, EventArgs e) 
+        private void NegateOperatorClick(object sender, EventArgs e)
+        {
+            if (!Transition("neg")) return;
+
+            if (result.Text != "0")
+            {
+                if (result.Text[0] == '-') result.Text = result.Text.Substring(1, result.Text.Length - 1);
+                else if (result.Text[0] != '-') result.Text = "-" + result.Text;
+            }
+        }
+
+        public void BracketOperatorClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
-            
+
             if (b.Text == "(")
             {
                 if (!Transition("op brack")) return;
-        
+
                 unclosedOpenBracketCount++;
                 equation.Text += @"(";
                 _input += (@"( ");
@@ -332,7 +351,7 @@ namespace Calculator
                 else unclosedOpenBracketCount--;
 
                 if (!Transition("cl brack")) return;
-                
+
                 if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
                 {
                     equation.Text += @")";
@@ -347,6 +366,16 @@ namespace Calculator
                 // Reset data entry with 0
                 result.Text = @"0";
             }
+        }
+
+        // Gets called when any of the unary operators are clicked on
+        private void UnaryOperatorClick(object sender, EventArgs e)
+        {
+            if (!Transition("un op")) return;
+
+            Button b = (Button)sender;
+
+            result.Text = Evaluate(b.Text + @" " + result.Text + @" ");
         }
 
         // Gets called when any of the binary operators are clicked on
@@ -372,30 +401,15 @@ namespace Calculator
             result.Text = @"0";
         }
 
-        private void NegateOperatorClick(object sender, EventArgs e)
-        {
-            if (!Transition("neg")) return;
-
-            if (result.Text != "0")
-            {
-                if (result.Text[0] == '-') result.Text = result.Text.Substring(1, result.Text.Length - 1);
-                else if (result.Text[0] != '-') result.Text = "-" + result.Text;
-            }
-        }
-
-        // Gets called when any of the unary operators are clicked on
-        private void UnaryOperatorClick(object sender, EventArgs e)
-        {
-
-        }
-
         private void buttonEquals_Click(object sender, EventArgs e)
         {            
             if (unclosedOpenBracketCount > 0) return;
             if (!Transition("eq")) return;
             
             // Add space at the end of equation for evaluation
-            if (_input.Length == 0 || (_input.Length > 0 && _input[_input.Length - 2] != ')')) _input += (result.Text + " ");
+            if (equation.Text.Length == 0 || (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] != ')')) _input += (result.Text + " ");
+
+            Console.WriteLine(_input);
 
             // Top of expStack is the result
             result.Text = Evaluate(_input).ToString();
@@ -414,6 +428,7 @@ namespace Calculator
 
             if (lastChar != '.' && !Transition("del num")) return;
             else if (lastChar == '.' && !Transition("del dec")) return;
+            else if (lastChar == ')') unclosedOpenBracketCount++;
             
             if (result != null) result.Text = result.Text.Length <= 1 ? @"0" : result.Text.Substring(0, result.Text.Length - 1);
             if (result.Text == @"-") result.Text = @"0";
