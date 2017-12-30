@@ -8,15 +8,11 @@ namespace Calculator
 {
     class State
     {
-        public string _name;
-        public bool _numbersLocked;
-        public bool _decimalLocked;
-        public bool _deleteLocked;
+        public string name;
 
-        public State(string name = "", bool decimalLocked = false)
+        public State(string name = "")
         {
-            _name = name;
-            _decimalLocked = decimalLocked;
+            this.name = name;
         }
     }
 }

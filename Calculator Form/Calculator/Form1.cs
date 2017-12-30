@@ -16,23 +16,29 @@ namespace Calculator
     {
         private static Hashtable states = new Hashtable()
         {
-            {"AOND", new State("AOND", false)},
-            {"AON", new State("AON", true)},
-            {"PC", new State("PC", false)}
+            {"AOND", new State("AOND")},
+            {"AON", new State("AON")},
+            {"PC", new State("PC")},
+            {"AO", new State("AO")},
+            {"AN", new State("AN")},
+            {"AND", new State("AND")},
         };
 
         // Transitions to new state based on input
         private bool Transition(string input)
         {
-            switch (_currentState._name)
+            switch (_currentState.name)
             {
                 case "AOND":
                     {
                         if (input == "num") _currentState = (State)states["AOND"];
-                        else if (input == "dec") _currentState = (State)states["AON"];
+                        else if (input == "dec") _currentState = (State)states["AN"];
                         else if (input == "del num") _currentState = (State)states["AOND"];
-                        else if (input == "op") _currentState = (State)states["AOND"];
+                        else if (input == "bin op") _currentState = (State)states["AOND"];
+                        else if (input == "un op") _currentState = (State)states["AOND"];
                         else if (input == "eq") _currentState = (State)states["PC"];
+                        else if (input == "op brack") _currentState = (State)states["AOND"];
+                        else if (input == "cl brack") _currentState = (State)states["AO"];
                         else return false;
                     }
                     break;
@@ -41,8 +47,11 @@ namespace Calculator
                         if (input == "num") _currentState = (State)states["AON"];
                         else if (input == "del num") _currentState = (State)states["AON"];
                         else if (input == "del dec") _currentState = (State)states["AOND"];
-                        else if (input == "op") _currentState = (State)states["AOND"];
+                        else if (input == "bin op") _currentState = (State)states["AOND"];
+                        else if (input == "un op") _currentState = (State)states["AOND"];
                         else if (input == "eq") _currentState = (State)states["PC"];
+                        else if (input == "op brack") _currentState = (State)states["AON"];
+                        else if (input == "cl brack") _currentState = (State)states["AO"];
                         else return false;
                     }
                     break;
@@ -60,25 +69,47 @@ namespace Calculator
                             _currentState = (State)states["AON"];
                             result.Text = @"0";
                         }
-                        else if (input == "op")
-                        {
-                            _currentState = (State)states["AOND"];
-                        }
-                        else if (input == "eq")
-                        {
-                            _currentState = (State)states["PC"];
-                        }
+                        else if (input == "bin op") _currentState = (State)states["AOND"];
+                        else if (input == "un op") _currentState = (State)states["AOND"];
+                        else if (input == "eq") _currentState = (State)states["PC"];
                         else if (input == "del num" || input == "del dec")
                         {
                             _currentState = (State)states["AOND"];
                             result.Text = @"0";
                         }
+                        else if (input == "op brack")
+                        {
+                            if (result.Text.IndexOf(".") >= 0) _currentState = (State)states["AON"];
+                            else _currentState = (State)states["AOND"];
+                        }
                         else return false;
                     }
                     break;
-                }
-
-                return true;
+                case "AO":
+                    // Note: this state does not accept open bracket, as this state is only reached through a closing bracket
+                    // An open bracket cannot immediately follow a closed bracket
+                    {
+                        if (input == "del num") _currentState = (State)states["AON"];
+                        else if (input == "del dec") _currentState = (State)states["AOND"];
+                        else if (input == "bin op") _currentState = (State)states["AOND"];
+                        else if (input == "un op") _currentState = (State)states["AOND"];
+                        else if (input == "eq") _currentState = (State)states["PC"];
+                        else if (input == "cl brack") _currentState = (State)states["AO"];
+                        else return false;
+                    }
+                    break;
+                case "AN":
+                    {
+                        if (input == "num") _currentState = (State)states["AON"];
+                        else if (input == "del num") _currentState = (State)states["AON"];
+                        else if (input == "del dec") _currentState = (State)states["AOND"];
+                        else return false;
+                    }
+                    break;
+            }
+            
+            Console.WriteLine(_currentState.name);
+            return true;
         }
 
         private static State _currentState = (State)states["AOND"];
@@ -268,7 +299,7 @@ namespace Calculator
         // Gets called when any of the decimal is clicked on
         public void DecimalClick(object sender, EventArgs e)
         {
-            if (_currentState._decimalLocked || !Transition("dec")) return;
+            if (!Transition("dec")) return;
             
             Button b = (Button)sender;
 
@@ -276,14 +307,14 @@ namespace Calculator
             result.Text += b.Text;
         }
 
-        public void BracketClick(object sender, EventArgs e)
+        public void BracketClick(object sender, EventArgs e) 
         {
-            if (!Transition("op")) return;
-
             Button b = (Button)sender;
             
             if (b.Text == "(")
             {
+                if (!Transition("op brack")) return;
+        
                 unclosedOpenBracketCount++;
                 equation.Text += @"(";
                 _input += (@"( ");
@@ -292,6 +323,8 @@ namespace Calculator
             {
                 if (unclosedOpenBracketCount <= 0) return;
                 else unclosedOpenBracketCount--;
+
+                if (!Transition("cl brack")) return;
                 
                 if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
                 {
@@ -312,7 +345,7 @@ namespace Calculator
         // Gets called when any of the binary operators are clicked on
         private void BinaryOperatorClick(object sender, EventArgs e)
         {
-            if (!Transition("op")) return;
+            if (!Transition("bin op")) return;
 
             Button b = (Button)sender;
 
@@ -335,7 +368,7 @@ namespace Calculator
         // Gets called when any of the unary operators are clicked on
         private void UnaryOperatorClick(object sender, EventArgs e)
         {
-            if (!Transition("op")) return;
+            if (!Transition("un op")) return;
 
             Button b = (Button)sender;
 
@@ -355,6 +388,7 @@ namespace Calculator
 
         private void buttonEquals_Click(object sender, EventArgs e)
         {            
+            if (unclosedOpenBracketCount > 0) return;
             if (!Transition("eq")) return;
             
             // Add space at the end of equation for evaluation
@@ -367,6 +401,7 @@ namespace Calculator
             equation.Clear();
 
             _input = result.Text + " ";
+            unclosedOpenBracketCount = 0;
         }
 
         // Removes last character from string in number entry
@@ -385,6 +420,7 @@ namespace Calculator
         private void buttonClearEntry_Click(object sender, EventArgs e)
         {
             if (result != null) result.Text = @"0";
+            _currentState = (State)states["AOND"];
         }
 
         // Removes all text from both equation and number entry
@@ -393,6 +429,8 @@ namespace Calculator
             if (result != null) result.Text = @"0";
             if (equation != null) equation.Text = "";
             _input = "";
+            unclosedOpenBracketCount = 0;
+            _currentState = (State)states["AOND"];
         }
 
         private void button10_Click(object sender, EventArgs e)
