@@ -83,6 +83,7 @@ namespace Calculator
 
         private static State _currentState = (State)states["AOND"];
         private static string _input = "";
+        private static int unclosedOpenBracketCount = 0;
         
         // Determines whether token is an operator
         private static bool IsOperator(string token)
@@ -283,11 +284,15 @@ namespace Calculator
             
             if (b.Text == "(")
             {
+                unclosedOpenBracketCount++;
                 equation.Text += @"(";
                 _input += (@"( ");
             }
             else if (b.Text == ")")
             {
+                if (unclosedOpenBracketCount <= 0) return;
+                else unclosedOpenBracketCount--;
+                
                 if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
                 {
                     equation.Text += @")";
