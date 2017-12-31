@@ -125,7 +125,7 @@ namespace Calculator
         // Determines whether token is an operator
         private static bool IsOperator(string token)
         {
-            return token == "abs" || token == "+" || token == "-" ||
+            return token == "abs" || token == "fact" || token == "+" || token == "-" ||
             token == "*" || token == "/" || token == "(" || token == ")";
         }
 
@@ -240,6 +240,14 @@ namespace Calculator
 
                     }
                     break;
+                case "fact":
+                    {
+                        double operand = e.Pop();
+                        exp = new FactOp(operand);
+                        e.Push(exp.Evaluate());
+
+                    }
+                    break;
                 case "+":
                     {
                         double operand2 = e.Pop();
@@ -307,11 +315,9 @@ namespace Calculator
             
             Button b = (Button)sender;
 
-            // Removes leading 0 in number entry
-            if (result.Text == "0") result.Clear();
-
-            // Appends clicked character to number entry 
-            result.Text += b.Text;
+            // Removes leading 0 in number entry and appends number
+            if (result.Text[result.Text.Length - 1] == '0') result.Text = result.Text.Substring(0, result.Text.Length - 1) + b.Text;
+            else result.Text += b.Text;
         }
 
         // Gets called when any of the decimal is clicked on
@@ -366,9 +372,6 @@ namespace Calculator
                     equationWithSpaces += " " + result.Text + " ) ";
                 }
 
-                equationWithSpaces = equationWithSpaces.Replace("(", " ( ");
-                Console.WriteLine(equationWithSpaces);
-
                 // Reset data entry with 0
                 result.Text = "0";
             }
@@ -413,9 +416,9 @@ namespace Calculator
             if (unclosedOpenBracketCount > 0) return;
             if (!Transition("eq")) return;
             
-            // Top of expStack is the result
             if (equation.Text[equation.Text.Length - 1] != ')') equationWithSpaces += " " + result.Text + " ";
 
+            equationWithSpaces = equationWithSpaces.Replace("(", " ( ");
             result.Text = Evaluate(equationWithSpaces).ToString();
 
             // Resets the equation, current result now first entry of subsequent calculations

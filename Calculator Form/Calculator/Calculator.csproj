@@ -50,6 +50,7 @@
     <Compile Include="Calculator\Const.cs" />
     <Compile Include="Calculator\DivOp.cs" />
     <Compile Include="Calculator\Expression.cs" />
+    <Compile Include="Calculator\FactOp.cs" />
     <Compile Include="Calculator\MultOp.cs" />
     <Compile Include="Calculator\State.cs" />
     <Compile Include="Calculator\SubOp.cs" />

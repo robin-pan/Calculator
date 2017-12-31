@@ -54,6 +54,7 @@
             this.button15 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -344,11 +345,23 @@
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.UnaryOperatorClick);
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(241, 293);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(66, 65);
+            this.button10.TabIndex = 42;
+            this.button10.TabStop = false;
+            this.button10.Text = "fact";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.UnaryOperatorClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(639, 616);
+            this.Controls.Add(this.button10);
             this.Controls.Add(this.button17);
             this.Controls.Add(this.button16);
             this.Controls.Add(this.button15);
@@ -414,6 +427,7 @@
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button button16;
         private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.Button button10;
 
     }
 }
