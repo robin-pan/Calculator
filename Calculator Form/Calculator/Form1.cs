@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Calculator
 {
@@ -59,24 +60,22 @@ namespace Calculator
                     break;
                 case "PC":
                     {
-                        _input = "";
-                        
                         if (input == "num")
                         {
                             _currentState = (State)states["AOND"];
-                            result.Text = @"0";
+                            result.Text = "0";
                         }
                         else if (input == "dec")
                         {
                             _currentState = (State)states["AON"];
-                            result.Text = @"0";
+                            result.Text = "0";
                         }
                         else if (input == "bin op") _currentState = (State)states["AOND"];
                         else if (input == "un op") _currentState = (State)states["AOND"];
                         else if (input == "del num" || input == "del dec")
                         {
                             _currentState = (State)states["AOND"];
-                            result.Text = @"0";
+                            result.Text = "0";
                         }
                         else if (input == "op brack")
                         {
@@ -120,7 +119,7 @@ namespace Calculator
         }
 
         private static State _currentState = (State)states["AOND"];
-        private static string _input = "";
+        private static String equationWithSpaces = " ";
         private static int unclosedOpenBracketCount = 0;
         
         // Determines whether token is an operator
@@ -152,8 +151,11 @@ namespace Calculator
         // Converts equation from infix to post fix
         private static string ToPostfix(string expInfix)
         {
-            string[] tokens = expInfix.Split(' ');
-            int tokenCount = tokens.Count() - 1;
+            Console.WriteLine(expInfix);
+            
+            string[] tokens = Regex.Split(expInfix.Trim(), "\\s+");
+
+            int tokenCount = tokens.Count();
             string output = "";
 
             Stack<string> operators = new Stack<string>();
@@ -208,8 +210,9 @@ namespace Calculator
             string expPostfix = ToPostfix(input);
 
             // Split postfix expression into its tokens
-            string[] tokens = expPostfix.Split(' ');
-            int tokenCount = tokens.Count() - 1;
+            string[] tokens = Regex.Split(expPostfix.Trim(), "\\s+");
+
+            int tokenCount = tokens.Count();
 
             // Tokens are processed in expStack
             for (int i = 0; i < tokenCount; i++)
@@ -298,21 +301,21 @@ namespace Calculator
         }
 
         // Gets called when any of the digits are clicked on
-        public void NumClick(object sender, EventArgs e)
+        private void NumClick(object sender, EventArgs e)
         {
             if (!Transition("num")) return;
             
             Button b = (Button)sender;
 
             // Removes leading 0 in number entry
-            if (result.Text == @"0") result.Clear();
+            if (result.Text == "0") result.Clear();
 
             // Appends clicked character to number entry 
             result.Text += b.Text;
         }
 
         // Gets called when any of the decimal is clicked on
-        public void DecimalClick(object sender, EventArgs e)
+        private void DecimalClick(object sender, EventArgs e)
         {
             if (!Transition("dec")) return;
             
@@ -333,7 +336,7 @@ namespace Calculator
             }
         }
 
-        public void BracketOperatorClick(object sender, EventArgs e)
+        private void BracketOperatorClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
 
@@ -342,8 +345,8 @@ namespace Calculator
                 if (!Transition("op brack")) return;
 
                 unclosedOpenBracketCount++;
-                equation.Text += @"(";
-                _input += (@"( ");
+                equation.Text += "(";
+                equationWithSpaces += " ( ";
             }
             else if (b.Text == ")")
             {
@@ -354,17 +357,20 @@ namespace Calculator
 
                 if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
                 {
-                    equation.Text += @")";
-                    _input += @") ";
+                    equation.Text += ")";
+                    equationWithSpaces += " ) ";
                 }
                 else
                 {
-                    equation.Text += result.Text + @")";
-                    _input += result.Text + @" ) ";
+                    equation.Text += result.Text + ")";
+                    equationWithSpaces += " " + result.Text + " ) ";
                 }
 
+                equationWithSpaces = equationWithSpaces.Replace("(", " ( ");
+                Console.WriteLine(equationWithSpaces);
+
                 // Reset data entry with 0
-                result.Text = @"0";
+                result.Text = "0";
             }
         }
 
@@ -375,7 +381,8 @@ namespace Calculator
 
             Button b = (Button)sender;
 
-            result.Text = Evaluate(b.Text + @" " + result.Text + @" ");
+            result.Text = b.Text + "(" + result.Text;
+            unclosedOpenBracketCount++;
         }
 
         // Gets called when any of the binary operators are clicked on
@@ -389,16 +396,16 @@ namespace Calculator
             if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
             {
                 equation.Text += b.Text;
-                _input += b.Text + @" ";
+                equationWithSpaces += " " + b.Text + " ";
             }
             else
             {
                 equation.Text += (result.Text + b.Text);
-                _input += (result.Text += @" " + b.Text + @" ");
+                equationWithSpaces += " " + result.Text + " " + b.Text + " ";
             }
 
             // Reset data entry with 0
-            result.Text = @"0";
+            result.Text = "0";
         }
 
         private void buttonEquals_Click(object sender, EventArgs e)
@@ -406,18 +413,15 @@ namespace Calculator
             if (unclosedOpenBracketCount > 0) return;
             if (!Transition("eq")) return;
             
-            // Add space at the end of equation for evaluation
-            if (equation.Text.Length == 0 || (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] != ')')) _input += (result.Text + " ");
-
-            Console.WriteLine(_input);
-
             // Top of expStack is the result
-            result.Text = Evaluate(_input).ToString();
+            if (equation.Text[equation.Text.Length - 1] != ')') equationWithSpaces += " " + result.Text + " ";
+
+            result.Text = Evaluate(equationWithSpaces).ToString();
 
             // Resets the equation, current result now first entry of subsequent calculations
             equation.Clear();
+            equationWithSpaces = " ";
 
-            _input = result.Text + " ";
             unclosedOpenBracketCount = 0;
         }
 
@@ -430,41 +434,25 @@ namespace Calculator
             else if (lastChar == '.' && !Transition("del dec")) return;
             else if (lastChar == ')') unclosedOpenBracketCount++;
             
-            if (result != null) result.Text = result.Text.Length <= 1 ? @"0" : result.Text.Substring(0, result.Text.Length - 1);
-            if (result.Text == @"-") result.Text = @"0";
+            if (result != null) result.Text = result.Text.Length <= 1 ? "0" : result.Text.Substring(0, result.Text.Length - 1);
+            if (result.Text == "-") result.Text = "0";
         }
 
         // Removes all text from both equation and number entry
         private void buttonClearEntry_Click(object sender, EventArgs e)
         {
-            if (result != null) result.Text = @"0";
+            if (result != null) result.Text = "0";
             _currentState = (State)states["AOND"];
         }
 
         // Removes all text from both equation and number entry
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            if (result != null) result.Text = @"0";
-            if (equation != null) equation.Text = "";
-            _input = "";
+            result.Text = "0";
+            equation.Text = "";
+            equationWithSpaces = " ";
             unclosedOpenBracketCount = 0;
             _currentState = (State)states["AOND"];
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine(result.Text.Length);
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine(equation.Text.Length);
-        }
-
-        private void button12_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine(_input.Length);
-            Console.WriteLine(_input);
         }
     }
 }

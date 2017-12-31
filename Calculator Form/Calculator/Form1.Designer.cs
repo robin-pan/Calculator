@@ -49,9 +49,6 @@
             this.equation = new System.Windows.Forms.TextBox();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.Wrapper = new System.Windows.Forms.TextBox();
-            this.button12 = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.button10 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
@@ -292,39 +289,6 @@
             this.Wrapper.TabStop = false;
             this.Wrapper.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // button12
-            // 
-            this.button12.Location = new System.Drawing.Point(19, 442);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(66, 65);
-            this.button12.TabIndex = 24;
-            this.button12.TabStop = false;
-            this.button12.Text = "INPUTLEN";
-            this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.button12_Click);
-            // 
-            // button11
-            // 
-            this.button11.Location = new System.Drawing.Point(19, 364);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(66, 65);
-            this.button11.TabIndex = 23;
-            this.button11.TabStop = false;
-            this.button11.Text = "EQUATIONLEN";
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(19, 293);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(66, 65);
-            this.button10.TabIndex = 22;
-            this.button10.TabStop = false;
-            this.button10.Text = "RESULTLEN";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
-            // 
             // button13
             // 
             this.button13.Location = new System.Drawing.Point(316, 222);
@@ -391,9 +355,6 @@
             this.Controls.Add(this.button14);
             this.Controls.Add(this.button13);
             this.Controls.Add(this.equation);
-            this.Controls.Add(this.button12);
-            this.Controls.Add(this.button11);
-            this.Controls.Add(this.button10);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonDecimal);
@@ -448,9 +409,6 @@
         private System.Windows.Forms.TextBox equation;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.TextBox Wrapper;
-        private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
