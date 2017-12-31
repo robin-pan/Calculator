@@ -113,8 +113,7 @@ namespace Calculator
                     }
                     break;
             }
-            
-            Console.WriteLine(_currentState.name);
+
             return true;
         }
 
@@ -151,8 +150,6 @@ namespace Calculator
         // Converts equation from infix to post fix
         private static string ToPostfix(string expInfix)
         {
-            Console.WriteLine(expInfix);
-            
             string[] tokens = Regex.Split(expInfix.Trim(), "\\s+");
 
             int tokenCount = tokens.Count();
@@ -356,10 +353,10 @@ namespace Calculator
             }
             else if (b.Text == ")")
             {
+                 if (!Transition("cl brack")) return;
+                
                 if (unclosedOpenBracketCount <= 0) return;
                 else unclosedOpenBracketCount--;
-
-                if (!Transition("cl brack")) return;
 
                 if (equation.Text.Length > 0 && equation.Text[equation.Text.Length - 1] == ')')
                 {
@@ -432,13 +429,15 @@ namespace Calculator
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             char lastChar = result.Text[result.Text.Length - 1];
-
             if (lastChar != '.' && !Transition("del num")) return;
             else if (lastChar == '.' && !Transition("del dec")) return;
             else if (lastChar == ')') unclosedOpenBracketCount++;
             
             if (result != null) result.Text = result.Text.Length <= 1 ? "0" : result.Text.Substring(0, result.Text.Length - 1);
             if (result.Text == "-") result.Text = "0";
+
+            lastChar = result.Text[result.Text.Length - 1];
+            if (lastChar == '.') _currentState = (State) states["AN"];
         }
 
         // Removes all text from both equation and number entry
